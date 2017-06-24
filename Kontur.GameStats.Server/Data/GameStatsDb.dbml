@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="game_stats_db" Class="GameStatsDbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Data\game_stats_db.mdf;Integrated Security=True;Connect Timeout=30" SettingsObjectName="Kontur.GameStats.Server.Properties.Settings" SettingsPropertyName="game_stats_db_connection_string" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.GameModes" Member="GameModes">
+    <Type Name="GameModes">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(5) NOT NULL" CanBeNull="false" />
+      <Association Name="GameModes_GameModesOnServers" Member="GameModesOnServers" ThisKey="id" OtherKey="gm_id" Type="GameModesOnServers" />
+      <Association Name="GameModes_Matches" Member="Matches" ThisKey="id" OtherKey="gm_id" Type="Matches" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GameModesOnServers" Member="GameModesOnServers">
+    <Type Name="GameModesOnServers">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="server_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="gm_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="GameModes_GameModesOnServers" Member="GameModes" ThisKey="gm_id" OtherKey="id" Type="GameModes" IsForeignKey="true" />
+      <Association Name="Servers_GameModesOnServers" Member="Servers" ThisKey="server_id" OtherKey="id" Type="Servers" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Maps" Member="Maps">
+    <Type Name="Maps">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+      <Association Name="Maps_Matches" Member="Matches" ThisKey="id" OtherKey="map_id" Type="Matches" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Players" Member="Players">
+    <Type Name="Players">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+      <Column Name="total_kills" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="total_deaths" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="matches_played" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Players_Matches" Member="Matches" ThisKey="id" OtherKey="winner_id" Type="Matches" />
+      <Association Name="Players_PlayersInMatches" Member="PlayersInMatches" ThisKey="id" OtherKey="player_id" Type="PlayersInMatches" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Servers" Member="Servers">
+    <Type Name="Servers">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="endpoint" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+      <Association Name="Servers_GameModesOnServers" Member="GameModesOnServers" ThisKey="id" OtherKey="server_id" Type="GameModesOnServers" />
+      <Association Name="Servers_ServersByDay" Member="ServersByDay" ThisKey="id" OtherKey="server_id" Type="ServersByDay" />
+      <Association Name="Servers_Matches" Member="Matches" ThisKey="id" OtherKey="server_id" Type="Matches" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ServersByDay" Member="ServersByDay">
+    <Type Name="ServersByDay">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="server_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="timestamp_day" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="matches_count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Servers_ServersByDay" Member="Servers" ThisKey="server_id" OtherKey="id" Type="Servers" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Matches" Member="Matches">
+    <Type Name="Matches">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="server_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="timestamp" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="timestamp_day" Type="System.DateTime" DbType="Date NOT NULL" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="map_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="gm_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="frag_limit" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="time_limit" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="time_elapsed" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="players_count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="winner_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Matches_PlayersInMatches" Member="PlayersInMatches" ThisKey="id" OtherKey="match_id" Type="PlayersInMatches" />
+      <Association Name="GameModes_Matches" Member="GameModes" ThisKey="gm_id" OtherKey="id" Type="GameModes" IsForeignKey="true" />
+      <Association Name="Maps_Matches" Member="Maps" ThisKey="map_id" OtherKey="id" Type="Maps" IsForeignKey="true" />
+      <Association Name="Servers_Matches" Member="Servers" ThisKey="server_id" OtherKey="id" Type="Servers" IsForeignKey="true" />
+      <Association Name="Players_Matches" Member="Players" ThisKey="winner_id" OtherKey="id" Type="Players" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayersInMatches" Member="PlayersInMatches">
+    <Type Name="PlayersInMatches">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="match_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="player_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="player_rank" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="frags" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="kills" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="deaths" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Matches_PlayersInMatches" Member="Matches" ThisKey="match_id" OtherKey="id" Type="Matches" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Players_PlayersInMatches" Member="Players" ThisKey="player_id" OtherKey="id" Type="Players" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+</Database>
